@@ -37,8 +37,11 @@ function processInput(ev: Event) {
     else {
         let parsed = ParseBarcodeString(code);
 
-        CurrentRecord.value.scans.push(parsed);
-        CurrentRecord.value.total = Tally(CurrentRecord.value.scans);
+        if(!isNaN(parsed.price))
+        {
+            CurrentRecord.value.scans.push(parsed);
+            CurrentRecord.value.total = Tally(CurrentRecord.value.scans);
+        }
     }
 
     element.value = "";
