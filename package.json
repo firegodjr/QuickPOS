@@ -1,5 +1,5 @@
 {
-  "name": "BakeSalePOS",
+  "name": "quick-pos",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,7 +18,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "server": "npx http-server ."
   },
   "keywords": [],
   "author": "",

@@ -1,9 +1,9 @@
 <script lang="ts">
-import { FormatPrice, IRecord } from "../Util/barcode";
+import { FormatPrice, IOrder } from "../Util/barcode";
 
 export default {
     props: {
-        record: Object as () => IRecord,
+        record: Object as () => IOrder,
         compact: Boolean
     },
     data() {

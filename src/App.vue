@@ -1,19 +1,22 @@
 <script lang="ts">
-import { ParseBarcodeString, TallyCents as Tally, IRecord as IScanRecord } from "./Util/barcode"
+import { ParseBarcodeString as BarcodeStringToOrderItem, Tally, IOrder, IOrderItem, IOrderHistoryItem } from "./Util/barcode"
 import ScanRecord from "./Components/ScanRecord.vue";
-import { ref } from "vue";
+import { Ref, ref } from "vue";
+import OrderHistory from "./Components/OrderHistory.vue";
 
-let CurrentRecord = ref({
+let CurrentRecord: Ref<IOrder> = ref({
         total: 0,
         scans: []
     });
 
 let BufferRecords = ref([]);
 
-let CashierRecord = ref({
+let CashierRecord: Ref<IOrder> = ref({
         total: 0,
         scans: []
     });
+
+let CompletedRecords: Ref<IOrderHistoryItem[]> = ref([]);
 
 function processInput(ev: Event) {
     let element = ev.target as any;
@@ -35,7 +38,7 @@ function processInput(ev: Event) {
         }
     }
     else {
-        let parsed = ParseBarcodeString(code);
+        let parsed: IOrderItem = BarcodeStringToOrderItem(code);
 
         if(!isNaN(parsed.price))
         {
@@ -65,6 +68,13 @@ function handleScannerNext() {
 /** Pull a scan record from the buffer to check the customer out */
 function handleCashierNext() {
     let newRecord = BufferRecords.value.pop();
+    if(CashierRecord.value.total) {
+        CompletedRecords.value.push({
+            total: CashierRecord.value.total,
+            time: (new Date()).toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")
+        });
+    }
+    
     if(newRecord) {
         CashierRecord.value = newRecord;
     }
@@ -98,10 +108,11 @@ export default {
             manualNext,
             CurrentRecord,
             BufferRecords,
-            CashierRecord
+            CashierRecord,
+            CompletedRecords
         }
     },
-    components: { ScanRecord }
+    components: { ScanRecord, OrderHistory }
 }
 </script>
 
@@ -112,7 +123,10 @@ export default {
         <div id="bufferListPane" class="pane">
             <ScanRecord v-for="record in BufferRecords" class="bufferItem" compact :record="record"></ScanRecord>
         </div>
-        <ScanRecord id="rightPane" class="pane" :record="CashierRecord">Cashier Order</ScanRecord>
+        <div id="rightPane">
+            <ScanRecord :record="CashierRecord">Cashier Order</ScanRecord>
+            <OrderHistory :records="CompletedRecords"></OrderHistory>
+        </div>
     </div>
 </template>
 
@@ -162,6 +176,7 @@ export default {
     }
 
     #leftPane {
+        position: relative;
         grid-column: 1;
     }
 
@@ -172,6 +187,7 @@ export default {
     }
 
     #rightPane {
+        position: relative;
         grid-column: 3;
     }
 </style>

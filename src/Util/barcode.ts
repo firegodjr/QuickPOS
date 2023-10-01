@@ -1,4 +1,4 @@
-export function ParseBarcodeString(code: string): IBarcodeScan
+export function ParseBarcodeString(code: string): IOrderItem
 {
     let codeTokens = code.split("$");
     return {
@@ -7,7 +7,7 @@ export function ParseBarcodeString(code: string): IBarcodeScan
     }
 }
 
-export function TallyCents(scans: IBarcodeScan[]): number
+export function Tally(scans: IOrderItem[]): number
 {
     let total = 0;
     for(let i = 0; i < scans.length; ++i)
@@ -22,12 +22,17 @@ export function FormatPrice(price: number)
     return "$" + (price/100).toFixed(2);
 }
 
-export interface IBarcodeScan {
+export interface IOrderItem {
     item: string,
     price: number
 }
 
-export interface IRecord {
-    scans: IBarcodeScan[],
+export interface IOrder {
+    scans: IOrderItem[],
     total: number
+}
+
+export interface IOrderHistoryItem {
+    total: number,
+    time: string
 }
