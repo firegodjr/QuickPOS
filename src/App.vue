@@ -125,7 +125,8 @@ export default {
                 @click="handleCashierNext"></ScanRecord>
         </div>
         <div id="rightPane">
-            <ScanRecord :record="CashierRecord">Cashier Order</ScanRecord>
+            <ScanRecord :record="CashierRecord">Cashier Order <button @click="handleCashierNext"><b>Finish</b></button>
+            </ScanRecord>
             <OrderHistory :records="CompletedRecords"></OrderHistory>
         </div>
     </div>
